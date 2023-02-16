@@ -20,4 +20,8 @@
     <Folder Include="Queries" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\DoodooCoreCsharp\DoodooCoreCsharp.csproj" />
+  </ItemGroup>
+
 </Project>
