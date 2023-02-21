@@ -17,7 +17,7 @@ class ZhClient
     public void Start()
     {
         var newHttpClient = new HttpClient();
-        newHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", zhGraphQlKey.Value);
+        newHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(scheme: "Bearer", parameter: zhGraphQlKey.Value);
         httpClient = Option.Some(newHttpClient);
     }
 

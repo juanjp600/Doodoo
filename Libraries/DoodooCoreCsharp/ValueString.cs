@@ -46,11 +46,19 @@ public readonly struct ValueString : IReadOnlyList<char>
     public override bool Equals(object? obj)
         => obj switch
         {
-            string str => Value.Equals(str, StringComparison.Ordinal),
-            ValueString vStr => Value.Equals(vStr.Value, StringComparison.Ordinal),
+            string str => Value.Equals(value: str, comparisonType: StringComparison.Ordinal),
+            ValueString vStr => Value.Equals(value: vStr.Value, comparisonType: StringComparison.Ordinal),
             _ => false
         };
 
     public override int GetHashCode()
         => Value.GetHashCode();
+
+    public ValueString Replace(ValueString oldStr, ValueString newStr)
+        => Value.Replace(oldValue: oldStr, newValue: newStr);
+
+    public ValueString LowerCamelCase()
+        => Value.Length > 0
+            ? char.ToLowerInvariant(Value[0]) + Value[1..]
+            : "";
 }

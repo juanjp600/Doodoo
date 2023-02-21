@@ -16,10 +16,10 @@ public readonly struct Result<TSuccess, TFailure>
     }
 
     public static Result<TSuccess, TFailure> Success(TSuccess value)
-        => new Result<TSuccess, TFailure>(Option.Some(value), Option.None);
+        => new Result<TSuccess, TFailure>(success: Option.Some(value), failure: Option.None);
     
     public static Result<TSuccess, TFailure> Failure(TFailure value)
-        => new Result<TSuccess, TFailure>(Option.None, Option.Some(value));
+        => new Result<TSuccess, TFailure>(success: Option.None, failure: Option.Some(value));
 
     public bool IsSuccess => success.IsSome;
 
@@ -36,6 +36,13 @@ public readonly struct Result<TSuccess, TFailure>
 
     public static implicit operator Result<TSuccess, TFailure>(Result.UnspecifiedFailure<TFailure> unspecifiedFailure)
         => Failure(unspecifiedFailure.Value);
+
+    public override string ToString()
+        => success.TryUnwrap(out var s)
+            ? $"Success({s})"
+            : failure.TryUnwrap(out var f)
+                ? $"Failure({f})"
+                : "default(Result)";
 }
 
 public static class Result

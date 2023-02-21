@@ -1,51 +1,18 @@
 ﻿using FZH;
+using FZH.Queries;
 
 Configuration.EnsureDirExists();
 var cfg = Configuration.LoadConfig();
 
 var zhClient = new ZhClient(cfg.UserZhGraphQlKey);
 zhClient.Start();
-var result = await zhClient.MakeRequest(@"
-{
-  issueByInfo(repositoryGhId: [RepoId], issueNumber: 3969) {
-    body
-    createdAt
-    estimate {
-      value
-    }
-    pipelineIssue(workspaceId: ""[WorkspaceId]"") {
-      pipeline {
-        name
-      }
-    }
-    assignees {
-      nodes {
-        login
-      }
-    }
-    pullRequest
-    pullRequestObject {
-      state
-    }
-    pullRequestReviews {
-      nodes {
-        user {
-          login
-        }
-        state
-      }
-    }
-    reviewRequests {
-      nodes {
-        reviewer {
-          __typename ... on User {
-            login
-          }
-        }
-      }
-    }
+
+var testQuery = new TestQuery {
+  IssueByInfo = new(RepositoryGhId: cfg.Repos.First().Id, IssueNumber: 3969) {
+    PipelineIssue = new(WorkspaceId: cfg.Workspaces.First().Id)
   }
-}"
-    .Replace("[RepoId]", cfg.Repos.First().Id.ToString())
-    .Replace("[WorkspaceId]", cfg.Workspaces.First().Id));
+};
+var pee = testQuery.IssueByInfo.ToGraphQlQuery("issueByInfo");
+
+var result = await zhClient.MakeRequest("{\n  "+testQuery.IssueByInfo.ToGraphQlQuery("issueByInfo").Replace("\n", "\n  ")+"\n}");
 Console.Write(result);
